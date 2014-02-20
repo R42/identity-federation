@@ -29,10 +29,10 @@ var profile = (function() {
   }
 
   return controls;
-});
+})();
 
 function init() {
-  if (! currentSession)
+  if (! localStorage.sessionToken)
     return display.login();
 
   loadProfile();
@@ -57,28 +57,21 @@ function doLogin(e) {
     url: 'http://auth.local:5000/',
     type: 'POST',
     data: { email: email, pass: pass },
-    error: loginError,
+    error: alert.bind(null, 'Something\'s wrong Jimmy...'),
     success: [input.val.bind(input, ''), afterLogin],
     complete: submitButton.removeAttr.bind(submitButton, 'disabled')
   });
 }
 
-function afterLogin(data) {
-  console.log('SUCCESS JIMMY', data);
-
-  // loadProfile();
-}
-
-function loginError(jqXHR, textStatus, errorThrown) {
-  console.log('Problems!', jqXHR, textStatus, errorThrown);
+function afterLogin(token) {
+  localStorage.sessionToken = token;
+  loadProfile();
 }
 
 function loadProfile() {
   profile.init();
   display.profile();
 }  
-
-var currentSession = localStorage.user;
 
 init();
 
