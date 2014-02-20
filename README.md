@@ -2,7 +2,7 @@
 
 in this repo there should be several projects
 
-- an login server
+- a login server
 - an example authenticated service
 - frontend code
 
