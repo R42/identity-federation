@@ -1,7 +1,9 @@
 #\ -p 5000
 $:<<'.'
 
-require 'rack/cors'
+require 'bundler/setup'
+Bundler.require :default
+
 require 'app'
 
 use Rack::Cors do
