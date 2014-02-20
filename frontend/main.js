@@ -2,6 +2,7 @@ var display = (function() {
 
   var controls = {};
 
+  $('.view').hide();
   $('.form-signin.login').submit(doLogin);
 
   controls.login = login;
@@ -17,7 +18,7 @@ var display = (function() {
   }
 
   return controls;
-});
+}());
 
 var profile = (function() {
   var controls = {};
@@ -53,10 +54,10 @@ function doLogin(e) {
   var submitButton = form.find('input[type=submit]');
   submitButton.attr('disabled', '');
   $.ajax({
-    url: 'auth.local',
+    url: 'http://auth.local:5000/',
     type: 'POST',
     data: { email: email, pass: pass },
-    error: alert.bind(null, 'Something\'s wrong Jimmy...'),
+    error: loginError,
     success: [input.val.bind(input, ''), afterLogin],
     complete: submitButton.removeAttr.bind(submitButton, 'disabled')
   });
@@ -66,6 +67,10 @@ function afterLogin(data) {
   console.log('SUCCESS JIMMY', data);
 
   // loadProfile();
+}
+
+function loginError(jqXHR, textStatus, errorThrown) {
+  console.log('Problems!', jqXHR, textStatus, errorThrown);
 }
 
 function loadProfile() {
