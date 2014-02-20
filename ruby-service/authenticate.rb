@@ -1,7 +1,5 @@
 require './validator'
 
-require'pry'
-
 class Authenticate
   
   def initialize(app)
@@ -18,5 +16,6 @@ class Authenticate
     return [ 401, {}, ['Invalid Authorization']] unless Validator.valid(auth_header)
     @app.call(env)
   end
+
 
 end
