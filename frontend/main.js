@@ -25,7 +25,15 @@ var profile = (function() {
 
   controls.init = init;
   function init() {
-    // TODO - Make authenticated request to server
+    $.ajax({
+      url: 'http://holmes.local:7000/',
+      type: 'GET',
+      headers: {
+        'Authorization': 'token ' + localStorage.sessionToken
+      },
+      error: function() { console.dir(arguments); },
+      success: function(data) { $('.profile.view').text(data); }
+    });
   }
 
   return controls;
