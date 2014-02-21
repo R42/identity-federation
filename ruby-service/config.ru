@@ -4,6 +4,8 @@ $:<<'.'
 require 'bundler/setup'
 Bundler.require :default
 
+require 'rack/cors'
+
 require 'app'
 require 'authenticate'
 
@@ -11,7 +13,7 @@ require 'authenticate'
 use Rack::Cors do 
   allow do
     origins '*'
-    resource '/*', :headers => :any, :methods => :any
+    resource '*', :headers => :any, :methods => [:get, :options, :post, :put], :credentials => false
   end
 end
 
