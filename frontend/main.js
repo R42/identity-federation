@@ -24,16 +24,14 @@ var profile = (function() {
   var controls = {};
 
   controls.init = init;
-  function init() {
+
+  function init(errorBack, success) {
     $.ajax({
-      url: 'http://holmes.local:7000/',
-      type: 'GET',
-      headers: {
-        'Authorization': 'token ' + localStorage.sessionToken
-      },
-      error: function() { console.dir(arguments); },
-      success: function(data) { $('.profile.view').text(data); }
-    });
+      url:"http://holmes.local:7000", 
+      headers: {"Authorization": 'token' + ' ' + localStorage.sessionToken },
+      success: success,
+      error: errorBack
+    })
   }
 
   return controls;
@@ -71,14 +69,31 @@ function doLogin(e) {
   });
 }
 
-function afterLogin(token) {
-  localStorage.sessionToken = token;
+
+function afterLogin(data) {
+  localStorage.sessionToken = data
   loadProfile();
+  console.log('SUCCESS JIMMY', data);
+}
+
+function loginError(jqXHR, textStatus, errorThrown) {
+  console.log('Problems!', jqXHR, textStatus, errorThrown);
 }
 
 function loadProfile() {
-  profile.init();
-  display.profile();
+  profile.init(errorBack, callback);
+
+  function errorBack(response) {
+    if (response.status = 401) {
+      localStorage.removeItem('sessionToken') 
+      display.login();
+    }
+  }
+
+  function callback(data) {
+    alert(data)
+    display.profile();
+  }
 }  
 
 init();
