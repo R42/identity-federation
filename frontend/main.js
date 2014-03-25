@@ -13,17 +13,26 @@ var display = (function() {
   function watson(data) {
     $('.view').hide();
     $('.profile').show();
+    $('#refresh_watson').click(loadWatsonServiceQuote)
+    $('#watson_container').removeClass('unavailable');
     $('#watson').html(data);
+  }
+
+  controls.watsonUnavailable = watsonUnavailable;
+  function watsonUnavailable() {
+    $('#watson_container').addClass('unavailable');
   }
 
   controls.holmes  = holmes;
   function holmes(data) {
     $('.view').hide();
     $('.profile').show();
+    $('#refresh_holmes').click(loadHolmesServiceQuote)
     $('#holmes').html(data)
   }
   
   return controls;
+
 }());
 
 var services = (function() {
@@ -60,7 +69,6 @@ function loadServicesQuotes() {
 
 function afterLogin(data) {
   localStorage.sessionToken = data;
-  debugger
   loadServicesQuotes();
 }
 
@@ -103,12 +111,17 @@ function loginError(jqXHR, textStatus, errorThrown) {
   console.log('Problems!', jqXHR, textStatus, errorThrown);
 }
 
-
 function loadWatsonServiceQuote() {
 
   services.watson(errorBack, callback);
 
-  function errorBack(response) {
+
+  function errorBack(response, textStatus, thrownError) {
+
+    if(textStatus == 'error' && response.status == 0) {
+      return display.watsonUnavailable();
+    }
+
     if (response.status = 401) {
       localStorage.removeItem('sessionToken') 
       display.login();
@@ -124,7 +137,12 @@ function loadHolmesServiceQuote() {
 
   services.holmes(errorBack, callback);
 
-  function errorBack(response) {
+  function errorBack(response, textStatus, thrownError) {
+    
+    console.log(response);
+    console.log(textStatus);
+    console.log(thrownError);
+
     if (response.status = 401) {
       localStorage.removeItem('sessionToken') 
       display.login();

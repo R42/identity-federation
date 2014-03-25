@@ -9,7 +9,7 @@ body {
 }
 
 .half_col {
-  
+
   float: left;
   background: #dbdbdb;
   width: 450px;
@@ -25,4 +25,8 @@ body {
 
 .last {
   margin-right: 0 !important;
+}
+
+.unavailable {
+  background: #f40806;
 }
