@@ -8,3 +8,21 @@ body {
   margin: auto;
 }
 
+.half_col {
+  
+  float: left;
+  background: #dbdbdb;
+  width: 450px;
+  height: 450px;
+  margin-right: 100px;
+}
+
+.container {
+  width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+.last {
+  margin-right: 0 !important;
+}

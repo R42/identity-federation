@@ -2,32 +2,48 @@ var display = (function() {
 
   var controls = {};
 
-  $('.view').hide();
-  $('.form-signin.login').submit(doLogin);
-
   controls.login = login;
+  
   function login() {
     $('.view').hide();
     $('.login').show();
   }
 
-  controls.profile = profile;
-  function profile() {
+  controls.watson  = watson;
+  function watson(data) {
     $('.view').hide();
     $('.profile').show();
+    $('#watson').html(data);
   }
 
+  controls.holmes  = holmes;
+  function holmes(data) {
+    $('.view').hide();
+    $('.profile').show();
+    $('#holmes').html(data)
+  }
+  
   return controls;
 }());
 
-var profile = (function() {
+var services = (function() {
   var controls = {};
 
-  controls.init = init;
-
-  function init(errorBack, success) {
+  controls.holmes = holmes;
+  function holmes(errorBack, success) {
     $.ajax({
       url:"http://holmes.local:7000", 
+      headers: {"Authorization": 'token' + ' ' + localStorage.sessionToken },
+      success: success,
+      error: errorBack
+    })
+  }
+
+
+  controls.watson =  watson;
+  function watson(errorBack, success) {
+    $.ajax({
+      url:"http://watson.local:9000", 
       headers: {"Authorization": 'token' + ' ' + localStorage.sessionToken },
       success: success,
       error: errorBack
@@ -37,11 +53,23 @@ var profile = (function() {
   return controls;
 })();
 
+function loadServicesQuotes() {
+  loadHolmesServiceQuote();
+  loadWatsonServiceQuote();
+}
+
+function afterLogin(data) {
+  localStorage.sessionToken = data;
+  debugger
+  loadServicesQuotes();
+}
+
 function init() {
+  $('.form-signin.login').submit(doLogin);
   if (! localStorage.sessionToken)
     return display.login();
 
-  loadProfile();
+  loadServicesQuotes();
 }
 
 function doLogin(e) {
@@ -59,6 +87,7 @@ function doLogin(e) {
   var input = emailInput.add(passInput);
   var submitButton = form.find('input[type=submit]');
   submitButton.attr('disabled', '');
+ 
   $.ajax({
     url: 'http://auth.local:5000/',
     type: 'POST',
@@ -70,18 +99,14 @@ function doLogin(e) {
 }
 
 
-function afterLogin(data) {
-  localStorage.sessionToken = data
-  loadProfile();
-  console.log('SUCCESS JIMMY', data);
-}
-
 function loginError(jqXHR, textStatus, errorThrown) {
   console.log('Problems!', jqXHR, textStatus, errorThrown);
 }
 
-function loadProfile() {
-  profile.init(errorBack, callback);
+
+function loadWatsonServiceQuote() {
+
+  services.watson(errorBack, callback);
 
   function errorBack(response) {
     if (response.status = 401) {
@@ -91,8 +116,23 @@ function loadProfile() {
   }
 
   function callback(data) {
-    alert(data)
-    display.profile();
+    display.watson(data);
+  }
+}  
+
+function loadHolmesServiceQuote() {
+
+  services.holmes(errorBack, callback);
+
+  function errorBack(response) {
+    if (response.status = 401) {
+      localStorage.removeItem('sessionToken') 
+      display.login();
+    }
+  }
+
+  function callback(data) {
+    display.holmes(data);
   }
 }  
 
